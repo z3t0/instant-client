@@ -1,55 +1,64 @@
 var PIXI = require('pixi.js')
 
+class Player {
+  constructor (data, game) {
+    this.id = data.id
+    this.isMe = data.isMe
 
-function Player(data, game) {
+    this.speed = data.speed
+    this.color = data.color
 
-	var player = {} 
-    player.id = data.id
-    player.isMe = data.isMe
+    this.sprite = new PIXI.Sprite(PIXI.loader.resources.circle.texture)
+    this.sprite.x = data.x
+    this.sprite.x = data.y
+    this.sprite.scale.x = data.sizeX
+    this.sprite.scale.y = data.sizeY
+    this.sprite.vx = data.vx
+    this.sprite.vy = data.vy
+    this.sprite.tint = data.color
 
-    player.speed = data.speed
-    player.color = data.color
+    game.stage.addChild(this.sprite)
 
-    player.sprite = new PIXI.Sprite(PIXI.loader.resources.circle.texture)
-    player.sprite.x = data.x
-    player.sprite.x = data.y
-    player.sprite.scale.x = data.sizeX
-    player.sprite.scale.y = data.sizeY
-    player.sprite.vx = data.vx
-    player.sprite.vy = data.vy
-    player.sprite.tint = data.color
+    this.game = game
+  }
 
-    game.stage.addChild(player.sprite)
-
-    player.game = game
-    player.update = update
-    player.setVelocityX = setVelocityX
-    player.setVelocityY = setVelocityY
-
-	return player
-}
-
-function update(deltaTime) {
-
+  update (deltaTime) {
     if (deltaTime) {
-        var sprite = this.sprite
-        sprite.x += sprite.vx * this.speed * deltaTime
-        sprite.y += sprite.vy * this.speed * deltaTime
+      var sprite = this.sprite
+      const speed = 0.05
+      deltaTime = deltaTime / 1000
+      sprite.x += sprite.vx * this.speed * deltaTime
+      sprite.y += sprite.vy * this.speed * deltaTime
+    }
+  }
 
+  sync (data){
+
+    if (data.x < 0)
+
+      this.sprite.x -= Math.abs(data.x - this.sprite.x) / 3
+
+    else {
+
+      this.sprite.x += Math.abs(data.x - this.sprite.x) / 3
     }
 
-}
+    if (data.y < 0)
+      this.sprite.y -= Math.abs(data.y - this.sprite.y) / 3
+    else {
+      this.sprite.y += Math.abs(data.y - this.sprite.y) / 3
+    }
+  }
 
-function setVelocityY(vy) {
-    
+  setVelocityY (vy) {
     var sprite = this.sprite
     sprite.vy = vy
-}
+  }
 
-function setVelocityX(vx) {
-    
+  setVelocityX (vx) {
     var sprite = this.sprite
     sprite.vx = vx
+  }
 }
 
 module.exports = Player

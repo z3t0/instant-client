@@ -1,6 +1,8 @@
 // Instant Client
 // Copyright Rafi Khan
 
+import Game from './game.js'
+
 window.onload = function() {
-    window.game = require('./game.js')()
+   const game = new Game()
 }

@@ -3,40 +3,39 @@
 
 var EventEmitter = require('eventemitter3')
 
-function Client(opts) {
+function Client (opts) {
+  console.log('created client')
 
-	console.log('created client')
+  var client = {}
 
-	var client = {}
+  var socket = require('socket.io-client')(opts.path)
 
-	var socket = require('socket.io-client')(opts.path);
+  var emitter = new EventEmitter()
 
-	var emitter = new EventEmitter()
-	
-	socket.on('registered', function(player_data) {
-		console.log('registered')
-		
-		player_data.isMe = true
-		emitter.emit('connect', player_data)
-	})
+  socket.on('registered', function (player_data) {
+    console.log('registered')
 
-	socket.on('new_player', function(player_data) {
-		player_data.isMe = false
-		emitter.emit('new_player', player_data)
-	})
+    player_data.isMe = true
+    emitter.emit('connect', player_data)
+  })
 
-	socket.on('update', function(data){
-		emitter.emit('update', data)
-	});
+  socket.on('new_player', function (player_data) {
+    player_data.isMe = false
+    emitter.emit('new_player', player_data)
+  })
 
-	socket.on('disconnect', function(data){
-		emitter.emit('disconnect', data)
-	});
+  socket.on('update', function (data) {
+    emitter.emit('update', data)
+  })
 
-	client.socket = socket
-	client.emitter = emitter
+  socket.on('disconnect', function (data) {
+    emitter.emit('disconnect', data)
+  })
 
-	return client
+  client.socket = socket
+  client.emitter = emitter
+
+  return client
 }
 
 module.exports = Client
